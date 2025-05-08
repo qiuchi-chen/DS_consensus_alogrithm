@@ -3,10 +3,10 @@ import time
 import unittest
 import numpy as np
 import matplotlib
-
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import os
-
+print(matplotlib.get_backend())  # 确保输出非 'Agg'
 
 
 class RaftNode:
