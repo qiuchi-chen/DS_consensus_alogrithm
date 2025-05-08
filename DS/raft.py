@@ -3,9 +3,10 @@ import time
 import unittest
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # 'Agg'后端适合在非交互式环境下保存图片，如在PyCharm的终端运行脚本时
+
 import matplotlib.pyplot as plt
 import os
+
 
 
 class RaftNode:
@@ -205,19 +206,19 @@ def analyze_data(raft_data):
 
     plt.tight_layout()
 
-    save_path = "D:/Code/CCBDA/DS/raft_analysis.png"
-    # 检查路径是否存在，如果不存在则创建
+    save_path = "raft_analysis.png"  # 保存到当前目录
+
+    # 确保目录存在
     directory = os.path.dirname(save_path)
-    if not os.path.exists(directory):
+    if directory and not os.path.exists(directory):
         os.makedirs(directory)
+
     try:
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        print(f'Raft图表已保存至: {save_path}')
+        plt.savefig(save_path)
+        print(f"图片已成功保存到: {save_path}")
+        plt.show()  # 弹出窗口显示图片
     except Exception as e:
-        print(f"保存图片时出错: {e}")
-
-
-# plt.show()
+        print(f"保存或显示图片时出错: {e}")
 
 
 class TestRaft(unittest.TestCase):
