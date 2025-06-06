@@ -3,10 +3,9 @@ import time
 import unittest
 import numpy as np
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')  # 'Agg'后端适合在非交互式环境下保存图片，如在PyCharm的终端运行脚本时
 import matplotlib.pyplot as plt
 import os
-print(matplotlib.get_backend())  # 确保输出非 'Agg'
 
 
 class RaftNode:
@@ -170,6 +169,7 @@ def run_experiment(network_delay, node_failure_rate):
     consensus_time = end_time - start_time
     throughput = 10 / consensus_time if consensus_time > 0 else 0
     data_consistency = check_data_consistency(all_nodes)
+    print('finished running experiment')
     return consensus_time, throughput, data_consistency
 
 
@@ -206,19 +206,19 @@ def analyze_data(raft_data):
 
     plt.tight_layout()
 
-    save_path = "raft_analysis.png"  # 保存到当前目录
-
-    # 确保目录存在
+    save_path = "D:/Code/CCBDA/DS/raft_analysis.png"
+    # 检查路径是否存在，如果不存在则创建
     directory = os.path.dirname(save_path)
-    if directory and not os.path.exists(directory):
+    if not os.path.exists(directory):
         os.makedirs(directory)
-
     try:
-        plt.savefig(save_path)
-        print(f"图片已成功保存到: {save_path}")
-        plt.show()  # 弹出窗口显示图片
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f'Raft图表已保存至: {save_path}')
     except Exception as e:
-        print(f"保存或显示图片时出错: {e}")
+        print(f"保存图片时出错: {e}")
+
+
+# plt.show()
 
 
 class TestRaft(unittest.TestCase):
@@ -249,13 +249,33 @@ class TestRaft(unittest.TestCase):
 if __name__ == '__main__':
     raft_results = []
 
-    for _ in range(50):
+    for i in range(50):
         network_delay = random.randint(10, 500)
         failure_rate = random.uniform(0.1, 0.5)
 
         raft_res = run_experiment(network_delay, failure_rate)
         raft_results.append(raft_res)
 
-    analyze_data(raft_results)
+        # 输出每次实验的详细数据（同上）
+        print(f"实验次数: {i + 1}")
+        print(f"网络延迟: {network_delay} ms")
+        print(f"节点失败率: {failure_rate:.2f}")
+        print(f"共识时间: {raft_res[0]:.4f} 秒")
+        print(f"吞吐量: {raft_res[1]:.4f} requests/s")
+        print(f"数据一致性: {raft_res[2]}\n")
 
+    # 计算并输出统计信息
+    consensus_times = [res[0] for res in raft_results]
+    throughputs = [res[1] for res in raft_results]
+    consistencies = [res[2] for res in raft_results]
+
+    print("=" * 50)
+    print("统计信息:")
+    print(f"平均共识时间: {np.mean(consensus_times):.4f} 秒")
+    print(f"平均吞吐量: {np.mean(throughputs):.4f} requests/s")
+    print(f"数据一致性成功率: {sum(consistencies) / len(consistencies) * 100:.2f}%")
+    print("=" * 50)
+
+    analyze_data(raft_results)
+    print('run unit test')
     unittest.main(argv=[''], exit=False)

@@ -1,0 +1,31 @@
+// Raft Algorithm Flowchart
+digraph {
+	Initialize [label="Initialize Nodes" shape=rectangle]
+	Heartbeat [label="Receive Heartbeat?" shape=diamond]
+	Follower [label="Maintain Follower State" shape=rectangle]
+	Timeout [label="Election Timeout?" shape=diamond]
+	Candidate [label="Become Candidate" shape=rectangle]
+	Initiate [label="Initiate Election" shape=rectangle]
+	Votes [label="Obtain Majority Votes?" shape=diamond]
+	Leader [label="Become Leader" shape=rectangle]
+	Return [label="Return to Follower State" shape=rectangle]
+	Client [label="Receive Client Request" shape=rectangle]
+	Replicate [label="Replicate Logs to Other Nodes" shape=rectangle]
+	Confirm [label="Majority Nodes Confirm?" shape=diamond]
+	Commit [label="Commit Logs" shape=rectangle]
+	Initialize -> Heartbeat
+	Heartbeat -> Follower [label=Yes]
+	Heartbeat -> Timeout [label=No]
+	Timeout -> Candidate [label=Yes]
+	Candidate -> Initiate
+	Initiate -> Votes
+	Votes -> Leader [label=Yes]
+	Votes -> Return [label=No]
+	Return -> Heartbeat
+	Leader -> Client
+	Client -> Replicate
+	Replicate -> Confirm
+	Confirm -> Commit [label=Yes]
+	Confirm -> Replicate [label=No]
+	Commit -> Client
+}
